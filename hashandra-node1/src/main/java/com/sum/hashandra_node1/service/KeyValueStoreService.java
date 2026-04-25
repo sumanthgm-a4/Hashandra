@@ -4,6 +4,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
 
+import com.sum.hashandra_node1.model.KVResponse;
+
 @Service
 public class KeyValueStoreService {
 
@@ -13,7 +15,7 @@ public class KeyValueStoreService {
         store.put(key, value);
     }
 
-    public String get(String key) {
-        return store.get(key);
+    public KVResponse get(String key) {
+        return new KVResponse(key, store.get(key));
     }
 }

@@ -2,12 +2,15 @@ spring:
     application:
         name: hashandra-node1
 
-nodeConfig:
+nodeConfigs:
     names:
-        node1: ${NODE_NAME1}
+        self: ${NODE_NAME1}
         node2: ${NODE_NAME2}
         node3: ${NODE_NAME3}
     urls:
-        node1: ${NODE_URL1}
+        self: ${NODE_URL1}
         node2: ${NODE_URL2}
         node3: ${NODE_URL3}
+
+server:
+    port: ${SERVER_PORT}

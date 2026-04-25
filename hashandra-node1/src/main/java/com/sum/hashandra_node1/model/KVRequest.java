@@ -2,9 +2,11 @@ package com.sum.hashandra_node1.model;
 
 import lombok.Builder;
 import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
-@Builder
 @Value
+@Builder
+@Jacksonized
 public class KVRequest {
 
     String key;

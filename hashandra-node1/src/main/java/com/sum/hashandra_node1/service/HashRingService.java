@@ -17,9 +17,9 @@ import jakarta.annotation.PostConstruct;
 @Service
 public class HashRingService {
 
-    @Value("${nodeConfigs.urls.node1}")
+    @Value("${nodeConfigs.urls.self}")
     private String node1Url;
-    @Value("${nodeConfigs.names.node1}")
+    @Value("${nodeConfigs.names.self}")
     private String node1Name;
 
     @Value("${nodeConfigs.urls.node2}")
@@ -62,7 +62,7 @@ public class HashRingService {
         return hashRing.get(nodeHash);
     }
 
-    List<Node> getReplicas(String key, Integer replicationFactor) {
+    public List<Node> getReplicas(String key, Integer replicationFactor) {
         List<Node> replicas = new ArrayList<>();
         int hash = hash(key);
 
