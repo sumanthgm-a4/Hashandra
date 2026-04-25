@@ -63,6 +63,29 @@ sequenceDiagram
     Coordinator-->>Client: Success / Failure
 ```
 ---
+## Read Flow
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant NodeA as Current Node
+    participant HashRing
+    participant PrimaryNode
+
+    Client->>NodeA: GET /get/{key}
+
+    NodeA->>HashRing: getPrimary(key)
+    HashRing-->>NodeA: Primary Node
+
+    alt Primary is current node
+        NodeA-->>Client: return value
+    else Primary is another node
+        NodeA->>PrimaryNode: Feign GET /get/{key}
+        PrimaryNode-->>NodeA: value
+        NodeA-->>Client: return value
+    end
+```
+---
 
 # Hashandra (Mini Cassandra Clone)
 
