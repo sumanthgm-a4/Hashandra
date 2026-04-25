@@ -120,6 +120,29 @@ sequenceDiagram
     NodeA->>NodeC: replicate
     NodeA->>NodeA: local write
 ```
+---
+## Read Flow
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant NodeA as Current Node
+    participant HashRing
+    participant PrimaryNode
+
+    Client->>NodeA: GET /get/{key}
+
+    NodeA->>HashRing: getPrimary(key)
+    HashRing-->>NodeA: Primary Node
+
+    alt Primary is current node
+        NodeA-->>Client: return value
+    else Primary is another node
+        NodeA->>PrimaryNode: Feign GET /get/{key}
+        PrimaryNode-->>NodeA: value
+        NodeA-->>Client: return value
+    end
+```
 
 ---
 
@@ -145,22 +168,32 @@ for (Node node : replicas) {
 
 ---
 
-## Running Multiple Nodes
+## Running Multiple Nodes (Manually)
 
 ### Node A
 ```bash
-SERVER_PORT=8081 NODE_NAME1=nodeA NODE_NAME2=nodeB NODE_NAME3=nodeC NODE_URL1=http://localhost:8081 NODE_URL2=http://localhost:8082 NODE_URL3=http://localhost:8083 java -jar build/libs/hashandra.jar
+SERVER_PORT=8081 NODES=nodeA:http://localhost:8081,nodeB:http://localhost:8082,nodeC:http://localhost:8083 SELF_NAME=nodeA java -jar build/libs/hashandra-node-1.0.jar
 ```
 
 ### Node B
 ```bash
-SERVER_PORT=8082 NODE_NAME1=nodeB NODE_NAME2=nodeA NODE_NAME3=nodeC NODE_URL1=http://localhost:8082 NODE_URL2=http://localhost:8081 NODE_URL3=http://localhost:8083 java -jar build/libs/hashandra.jar
+SERVER_PORT=8081 NODES=nodeA:http://localhost:8081,nodeB:http://localhost:8082,nodeC:http://localhost:8083 SELF_NAME=nodeB java -jar build/libs/hashandra-node-1.0.jar
 ```
 
 ### Node C
 ```bash
-SERVER_PORT=8083 NODE_NAME1=nodeC NODE_NAME2=nodeA NODE_NAME3=nodeB NODE_URL1=http://localhost:8083 NODE_URL2=http://localhost:8081 NODE_URL3=http://localhost:8082 java -jar build/libs/hashandra.jar
+SERVER_PORT=8081 NODES=nodeA:http://localhost:8081,nodeB:http://localhost:8082,nodeC:http://localhost:8083 SELF_NAME=nodeC java -jar build/libs/hashandra-node-1.0.jar
 ```
+
+## Run Using Docker Compose
+
+- Make sure you're in the same directory as the [docker-compose.yaml](docker-compose.yaml) file
+- Add/remove nodes if you want. Do it in the [docker-compose.yaml](docker-compose.yaml) file
+- Run using:
+```bash
+docker compose up
+```
+**Note**: A working image for this application - ```sumanthgma4/hashandra-node:1.0```, is already present in Docker Hub. So this yaml file will pull it and run it automatically.
 
 ---
 
@@ -186,6 +219,10 @@ curl -X POST http://localhost:8081/put \
 ## Future Improvements
 
 - Quorum reads/writes
+- Health checks via heartbeats
+- Eventual consistency
+- Read repairs
+- Hinted handoff
 - Node failure handling
 - Gossip protocol
 - Virtual nodes
