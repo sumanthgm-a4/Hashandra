@@ -3,14 +3,8 @@ spring:
         name: hashandra-node1
 
 nodeConfigs:
-    names:
-        self: ${NODE_NAME1}
-        node2: ${NODE_NAME2}
-        node3: ${NODE_NAME3}
-    urls:
-        self: ${NODE_URL1}
-        node2: ${NODE_URL2}
-        node3: ${NODE_URL3}
+    nodes: ${NODES}
+    self: ${SELF_NAME}
 
 server:
-    port: ${SERVER_PORT}
+    port: ${SERVER_PORT:8080}

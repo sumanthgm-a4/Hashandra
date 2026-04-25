@@ -13,6 +13,7 @@ public class KeyValueStoreService {
 
     public void put(String key, String value) {
         store.put(key, value);
+        System.out.println("\nKey-Value Store: " + store + "\n");
     }
 
     public KVResponse get(String key) {

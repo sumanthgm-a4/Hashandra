@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StoreController {
 
-    @Value("${nodeConfigs.names.self}")
+    @Value("${nodeConfigs.self}")
     private String selfId;
 
     private final HashRingService hashRingService;

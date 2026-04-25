@@ -1,5 +1,6 @@
 package com.sum.hashandra_node1.config;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,40 +27,14 @@ import feign.codec.StringDecoder;
 @Configuration
 public class NodeClientConfig {
 
-    // Don't need Feign call to self, lol
-    // @Value("${nodeConfigs.urls.self}")
-    // private String node1Url;
-    // @Value("${nodeConfigs.names.self}")
-    // private String node1Name;
-
-    @Value("${nodeConfigs.urls.node2}")
-    private String node2Url;
-    @Value("${nodeConfigs.names.node2}")
-    private String node2Name;
-
-    @Value("${nodeConfigs.urls.node3}")
-    private String node3Url;
-    @Value("${nodeConfigs.names.node3}")
-    private String node3Name;
+    @Value("${nodeConfigs.nodes}")
+    private String nodesConfig;
 
     @Bean("feignClientMap")
     public Map<String, NodeClient> feignClientMap(ObjectFactory<FeignHttpMessageConverters> converters) {
         Map<String, NodeClient> map = new HashMap<>();
 
-        List<Node> nodes = List.of(
-            // Node.builder()
-            //         .id(node1Name)
-            //         .url(node1Url)
-            //     .build(),
-            Node.builder()
-                    .id(node2Name)
-                    .url(node2Url)
-                .build(),
-            Node.builder()
-                    .id(node3Name)
-                    .url(node3Url)
-                .build()
-        );
+        List<Node> nodes = getNodes();
 
         for (Node node : nodes) {
             NodeClient client = Feign.builder()
@@ -73,5 +48,19 @@ public class NodeClientConfig {
         }
 
         return map;
+    }
+
+    @Bean("availableNodes")
+    public List<Node> getNodes() {
+        return Arrays.stream(nodesConfig.split(","))
+                .map(entry -> {
+                    String[] parts = entry.split(":", 2);
+
+                    return Node.builder()
+                            .id(parts[0])
+                            .url(parts[1])
+                            .build();
+                })
+                .toList();
     }
 }

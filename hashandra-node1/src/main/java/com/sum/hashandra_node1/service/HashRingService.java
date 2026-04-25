@@ -13,24 +13,13 @@ import org.springframework.stereotype.Service;
 import com.sum.hashandra_node1.model.Node;
 
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class HashRingService {
 
-    @Value("${nodeConfigs.urls.self}")
-    private String node1Url;
-    @Value("${nodeConfigs.names.self}")
-    private String node1Name;
-
-    @Value("${nodeConfigs.urls.node2}")
-    private String node2Url;
-    @Value("${nodeConfigs.names.node2}")
-    private String node2Name;
-
-    @Value("${nodeConfigs.urls.node3}")
-    private String node3Url;
-    @Value("${nodeConfigs.names.node3}")
-    private String node3Name;
+    public final List<Node> availableNodes;
 
     public final TreeMap<Integer, Node> hashRing = new TreeMap<>();
     
@@ -41,18 +30,8 @@ public class HashRingService {
 
     @PostConstruct
     public void init() {
-        addNode(Node.builder()
-                    .id(node1Name)
-                    .url(node1Url)
-                .build());
-        addNode(Node.builder()
-                    .id(node2Name)
-                    .url(node2Url)
-                .build());
-        addNode(Node.builder()
-                    .id(node3Name)
-                    .url(node3Url)
-                .build());
+        availableNodes.stream()
+            .forEach(this::addNode);
     }
 
     public Node getPrimary(String key) {
