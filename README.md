@@ -79,6 +79,8 @@ Hashandra is a simplified distributed key-value store inspired by Cassandra.
 ---
 
 ## Architecture
+The node which receives the request from the Client acts as the Coordinator node.       
+(Here it's **Node A**)
 
 ```mermaid
 graph TD
